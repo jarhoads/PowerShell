@@ -1,6 +1,6 @@
-﻿Param([String] $Path)
+﻿Param([String] $Path, [Int] $Width = 72, [Int] $Height = 72)
 
-function Convert-Thumbs{
+function Convert-Thumb{
 ################################################################
 #.Synopsis
 # Convert a directory of jpg images given by Path to thumbnails.
@@ -8,19 +8,21 @@ function Convert-Thumbs{
 # the path to the images that need to be converted
 ################################################################
     Param (
-        [String] $thumbsPath
+        [String] $thumbsPath,
+        [Int] $thumbWidth = 72,
+        [Int] $thumbHeight = 72
     )
     
     $jpgPath = "*.jpg"
     $thumbsPath += $jpgPath
 
-    Get-ChildItem -Path $thumbsPath | foreach {
+    Get-ChildItem -Path $thumbsPath | ForEach-Object {
      $full = [System.Drawing.Image]::FromFile("$(Resolve-Path $_)");
-     $thumb = $full.GetThumbnailImage(72, 72, $null, [intptr]::Zero);
+     $thumb = $full.GetThumbnailImage($thumbWidth, $thumbHeight, $null, [intptr]::Zero);
      $thumb.Save("$(Resolve-Path $_).thumb.jpg" );
      $full.Dispose();
      $thumb.Dispose();
     }
 }
 
-Convert-Thumbs -thumbsPath $Path
+Convert-Thumb -thumbsPath $Path -thumbWidth $Width -thumbHeight $Height
